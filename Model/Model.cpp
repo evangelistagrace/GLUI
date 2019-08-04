@@ -12,7 +12,6 @@
 
 
 
-
 using namespace std;
 int WindowWidth = 600, WindowHeight = 600;
 double posX = 0.0, posY = 0.0, posZ = 0.0, posInc = 0.1, angleInc = 2.0;
@@ -34,19 +33,11 @@ int   wireframe = 0;
 int   segments = 8;
 int main_window;
 GLUI *	Glui;
-int	ActiveButton;			// current button that is down
-GLuint	AxesList;			// list to hold the axes
-int	AxesOn;					// != 0 means to draw the axes
-int	DebugOn;				// != 0 means to print debugging info
-int	DepthCueOn;				// != 0 means to use intensity depth cueing				// instance of glui window
-int	GluiWindow;				// the glut id for the glui window
-int	LeftButton;				// either ROTATE or SCALE
+
 GLuint	BoxList;			// object display list
 int	MainWindow;				// window id for main graphics window
-GLfloat	RotMatrix[4][4];	// set by glui rotation widget
 float	Scale, Scale2;		// scaling factors
-int	WhichColor;				// index into Colors[ ]
-int	WhichProjection;		// ORTHO or PERSP
+
 int	Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;			// rotation angles in degrees
 float	TransXYZ[3];		// set by glui translation widgets
@@ -67,7 +58,6 @@ int countX=0;
 int x,y,z;
 //object color settings
 GLUI_Listbox* color_list;
-#define ROTATION_ID 10
 #define COLOR_ID 20
 int current_color(0);
 float obj_color [] = {0.5, 0.5, 0.5, 1.0};
@@ -88,8 +78,8 @@ void myGlutIdle( void )
   /* According to the GLUT specification, the current window is
      undefined during an idle callback.  So we need to explicitly change
      it if necessary */
-  if ( glutGetWindow() != main_window )
-    glutSetWindow(main_window);
+
+    glutSetWindow(MainWindow);
 
   glutPostRedisplay();
 }
@@ -106,7 +96,6 @@ void myDisplayFunc(void)
 {
     glEnable(GL_COLOR_MATERIAL);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //glColor3f(0.7,0,0);
     glPushMatrix();
     GLfloat amb_light[] = { 0.5f,0.5f,0.5f,1.0f };
     GLfloat diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -157,24 +146,16 @@ void myDisplayFunc(void)
 
     glScalef(scale, scale, scale);
 
-
-    if(axisornot%2 == 1)
-       Manipulation.DrawAxis();  //Press
-
     if(displayWireFrame)
         Manipulation.DisplayWireFrame(transparent, colorSeg);
     if(displayFaces)
         Manipulation.DisplayFaces(transparent, colorSeg);
     if(displayVertices)
         Manipulation.DisplayVertices(colorSeg);
-        //Status on displays
 
     if(check==1)
             Manipulation.DrawAxis();
-        // uniformly scale the scene:
 
-	glScalef( (GLfloat)Scale, (GLfloat)Scale, (GLfloat)Scale );
-	GLfloat scale2 = 1. + Scale2;		// because glui translation starts at 0.
 
 
 
@@ -337,7 +318,6 @@ void myMouseFunc(int button, int state, int x, int y)
 
 void switch_models(int index)
 {
-    string skeleton_filename;
     string segment_filename;
     string points_filename;
 
@@ -396,11 +376,10 @@ void myInit()
 
 }
 
-void
-Reset( void )
+void Reset()
 {
 
-	obj_pos[0] = obj_pos[1] = obj_pos[2] = 0.;
+	obj_pos[0] = obj_pos[1] = obj_pos[2] = 0.0;
 	 glMultMatrixf( view_rotate );
 
 
@@ -411,19 +390,14 @@ Buttons( int id )
 	switch( id )
 	{
 		case RESET:
-			//Reset( );
 
-            Reset( );
+            Reset();
 			Glui->sync_live( );
 			glutSetWindow( MainWindow );
 			glutPostRedisplay( );
 			break;
 
 		case QUIT:
-			// gracefully close the glui window:
-			// gracefully close out the graphics:
-			// gracefully close the graphics window:
-			// gracefully exit the program:
 
 			Glui->close( );
 			glutSetWindow( MainWindow );
@@ -431,9 +405,6 @@ Buttons( int id )
 			glutDestroyWindow( MainWindow );
 			exit( 0 );
 			break;
-
-		default:
-			fprintf( stderr, "Don't know what to do with Button ID %d\n", id );
 	}
 
 }
@@ -446,11 +417,7 @@ void Yvalue(int &y)
 
 void control_cb(int control)
 {
-	if (control == ROTATION_ID)
-	{
-		glutPostRedisplay();
-	}
-	else if (control == COLOR_ID)
+	if (control == COLOR_ID)
 	{
 		int color_id = color_list->get_int_val();
 		if (color_id == 0)
@@ -493,10 +460,6 @@ void initGlui(){
 	// setup the glui window:
 	glutInitWindowPosition( 700, 100 ); //right of object window
 	GLUI *glui= GLUI_Master.create_glui( "GLUI" );
-
-	//Title
-	//glui->add_statictext( (char *) GLUITITLE );
-	//glui->add_separator( );
 
 	//Object type panel
 	GLUI_Panel *obj_panel = glui->add_panel( "Object Type" );
@@ -551,6 +514,12 @@ void initGlui(){
      obj_panel = glui->add_panel("Object Rotation");
      GLUI_Rotation *view_rot = glui -> add_rotation_to_panel(obj_panel, "Rotate", view_rotate );
     view_rot->set_spin( 0.8 );
+
+     glutPostRedisplay();
+	// set the graphics window's idle function if needed:
+
+    GLUI_Master.set_glutIdleFunc( NULL );
+
 
 
 }

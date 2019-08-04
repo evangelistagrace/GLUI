@@ -126,18 +126,18 @@
 	<math.h>
 	<vector>
 
-1564904040 source:c:\users\evan_\downloads\a4\model\model.cpp
-	<iostream>
-	<string>
-	<fstream>
-	<GL/glut.h>
-	<vector>
-	<algorithm>
+1564914501 source:c:\users\evan_\downloads\a4\model\model.cpp
+	<stdio.h>
+	<stdlib.h>
+	<ctype.h>
 	<math.h>
-	"vertex.h"
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
 	<GL/glui.h>
+	<GL/glut.h>
 
-1564908592 source:d:\downloads\glui\model\model.cpp
+1564916568 source:d:\downloads\glui\model\model.cpp
 	<iostream>
 	<string>
 	<fstream>
