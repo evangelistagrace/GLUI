@@ -87,7 +87,6 @@ void InitTransparent()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glShadeModel(GL_SMOOTH);
-    glClearColor(1,0,0,0);
 }
 void myDisplayFunc(void)
 {
@@ -96,8 +95,8 @@ void myDisplayFunc(void)
     glPushMatrix();
     GLfloat amb_light[] = { 0.5f,0.5f,0.5f,1.0f };
     GLfloat diffuse[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-    GLfloat specular[] = { 1.0, 1.0, 1.0, 1.0};
-    GLfloat lightpos[] = {0.f,0.f,200.0f,1.0f};
+    GLfloat specular[] = { 0.5, 1.0, 1.0, 1.0};
+    GLfloat lightpos[] = {0.f,0.f,100.0f,1.0f};
 
     glLightfv( GL_LIGHT0, GL_AMBIENT, amb_light );
     glLightfv( GL_LIGHT0, GL_DIFFUSE, diffuse );
@@ -151,9 +150,7 @@ void myDisplayFunc(void)
         Manipulation.DisplayVertices(colorSeg);
 
     if(check==1)
-            Manipulation.DrawAxis();
-
-
+        Manipulation.DrawAxis();
 
 
     glPopMatrix();
@@ -339,11 +336,9 @@ void myInit()
     switch_models(0);
 
     InitTransparent();
-
     viewing();
-
-
-    glClearColor(1.0, 1.0, 1.0, 1.0);
+    //black background
+    glClearColor(0.0, 0.0, 0.0, 1.0);
 
     glutDisplayFunc(myDisplayFunc);// Specify the display callback function
     glutReshapeFunc(myReshapeFunc);
@@ -471,7 +466,7 @@ void initGlui(){
 
     //Object color
     obj_panel = glui->add_panel("Object Color");
-    color_list = glui->add_listbox_to_panel(obj_panel, "Colors", NULL, COLOR_ID, control_cb);
+    color_list = glui->add_listbox_to_panel(obj_panel, "Colors: ", NULL, COLOR_ID, control_cb);
 
     color_list->add_item(0, "Grey");
 	color_list->add_item(1, "Red");
@@ -514,6 +509,8 @@ void initGlui(){
 
      //Object rotation
      obj_panel = glui->add_panel("Object Rotation");
+     glui -> add_statictext_to_panel(obj_panel, "Press ALT key for horizontal movement (rotation along Y-axis");
+     glui -> add_statictext_to_panel(obj_panel, "Press CTRL key for vertical movement (rotation along X-axis");
      GLUI_Rotation *view_rot = glui -> add_rotation_to_panel(obj_panel, "Rotate", view_rotate );
     view_rot->set_spin( 0.8 );
 
