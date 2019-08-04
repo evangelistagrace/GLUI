@@ -19,7 +19,7 @@ int	MainWindow;
 
 //Object variables
 double posX = 0.0, posY = 0.0, posZ = 0.0, posInc = 0.1, angleInc = 2.0;
-double rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
+float rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
 float transX=0, transY=0, transZ=0;
 float scale = 1;
 int option = 0, axisornot = 0, colorSeg = 0;
@@ -28,7 +28,8 @@ bool displayWireFrame = false, displayVertices = false, displayFaces = true;
 static int model = 0;
 int   wireframe;
 //Identity matrix for rotation
-float view_rotate[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+float view_rotate[16] = { 1,0,0,0, rotateX,1,0,0, rotateY,0,1,0, rotateZ,0,0,1 };
+
 //Translation matrix
 float obj_pos[] = { 0.0, 0.0, 0.0 };
 // minimum allowable scale factor:
@@ -44,6 +45,7 @@ float obj_color [] = {0.5, 0.5, 0.5, 1.0};
 int COLOR_ID = 20;
 int current_color(0);
 float transparent = 1.0;
+int color_id;
 
 //GLUI variables
 GLUI *glui;
@@ -120,7 +122,7 @@ void myDisplayFunc(void)
 
 
          if ( radbut == 0 ) {
-      displayVertices = false, displayFaces = false, displayWireFrame = true;
+      displayVertices = false, displayFaces = true, displayWireFrame = false;
         }
          if(radbut==1)
         {
@@ -128,7 +130,7 @@ void myDisplayFunc(void)
         }
         if(radbut==2)
         {
-            displayVertices = false, displayFaces = true, displayWireFrame = false;
+            displayVertices = false, displayFaces = false, displayWireFrame = true;
         }
 
 
@@ -366,11 +368,28 @@ void myInit()
 
 void Reset()
 {
-
+    //reset position
 	obj_pos[0] = obj_pos[1] = obj_pos[2] = 0.0;
-	 glMultMatrixf( view_rotate );
+
+	//reset scale
+    scale=1.0;
+
+    //reset rotation
+    rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
+
+    view_rotate[1]=view_rotate[2]=view_rotate[3]=view_rotate[6]=view_rotate[7]=view_rotate[9]=view_rotate[11]=view_rotate[13]=view_rotate[14]=0.0;
+    view_rotate[0]=view_rotate[5]=view_rotate[10]=view_rotate[15]= 1.0;
+    view_rotate[4]=rotateX;
+    view_rotate[8]=rotateY;
+    view_rotate[12]=rotateZ;
+
+    //reset color
+    obj_color[0] = 0.5;
+    obj_color[1] = 0.5;
+    obj_color[2] = 0.5;
 
 
+    radbut = 0;
 }
 
 Buttons( int id )
@@ -407,7 +426,7 @@ void control_cb(int control)
 {
 	if (control == COLOR_ID)
 	{
-		int color_id = color_list->get_int_val();
+		color_id = color_list->get_int_val();
 		if (color_id == 0)
 		{
 			obj_color[0] = 0.5;
@@ -446,13 +465,13 @@ void initGlui(){
 	//Object type panel
 	obj_panel = glui->add_panel( "Object Type" );
     group = glui->add_radiogroup_to_panel( obj_panel,&radbut,3 );
-    glui->add_radiobutton_to_group( group, "Wireframe" );
+    glui->add_radiobutton_to_group( group, "Faces" );
     glui->add_radiobutton_to_group( group, "Vertices" );
-    glui->add_radiobutton_to_group( group, "Frames" );
+    glui->add_radiobutton_to_group( group, "Wireframe" );
 
     //Object color
     obj_panel = glui->add_panel("Object Color");
-    color_list = glui->add_listbox_to_panel(obj_panel, "Colors", &current_color, COLOR_ID, control_cb);
+    color_list = glui->add_listbox_to_panel(obj_panel, "Colors", NULL, COLOR_ID, control_cb);
 
     color_list->add_item(0, "Grey");
 	color_list->add_item(1, "Red");
@@ -498,6 +517,7 @@ void initGlui(){
      GLUI_Rotation *view_rot = glui -> add_rotation_to_panel(obj_panel, "Rotate", view_rotate );
     view_rot->set_spin( 0.8 );
 
+    glui -> sync_live();
      glutPostRedisplay();
 
     GLUI_Master.set_glutIdleFunc( NULL );
