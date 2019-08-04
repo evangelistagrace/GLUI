@@ -17,7 +17,7 @@ using namespace std;
 int WindowWidth = 600, WindowHeight = 600;
 double posX = 0.0, posY = 0.0, posZ = 0.0, posInc = 0.1, angleInc = 2.0;
 double rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
-static double scaleX = 1.0, scaleY = 1.0, scaleZ = 1.0;
+float scale = 1;			//  Spinner Scale Live Variable
 int option = 0, axisornot = 0, colorSeg = 0;
 bool mousePanMode=false, mouseZoomMode=false, mouseRotationMode=false;
 int mouseX = 0, mouseY = 0;
@@ -50,7 +50,6 @@ int	WhichProjection;		// ORTHO or PERSP
 int	Xmouse, Ymouse;			// mouse values
 float	Xrot, Yrot;			// rotation angles in degrees
 float	TransXYZ[3];		// set by glui translation widgets
-const char *GLUITITLE   = { "User Interface Window" };
 //Selection for which radio buttons
 int radbut=0;
 //to check if its ticked or no
@@ -156,7 +155,7 @@ void myDisplayFunc(void)
 
 
 
-    glScalef(scaleX, scaleY, scaleZ);
+    glScalef(scale, scale, scale);
 
 
     if(axisornot%2 == 1)
@@ -218,7 +217,7 @@ void mySpecialFunc(int key, int x, int y)
     case GLUT_KEY_HOME  :
         rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
         posX = 0.0, posY = 0.0, posZ = 0.0;
-        scaleX = 1.0, scaleY = 1.0, scaleZ = 1.0;
+        scale=1.0;
         break;
     case GLUT_KEY_F1    :
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -278,9 +277,8 @@ void myMotionFunc(int x, int y)
     if(mouseZoomMode)
     {
         GLdouble inc = (mouseY - y)*0.005;
-        scaleX += inc;
-        scaleY += inc;
-        scaleZ += inc;
+        scale += inc;
+
         mouseY = y;
         glutPostRedisplay();
     }
@@ -348,7 +346,6 @@ void switch_models(int index)
         case 0:
             points_filename = "data/Animal11Seg.ply";
             segment_filename = "data/Animal11Seg.seg";
-            //skeleton_filename = "data/chair.skel";
             eyeX=0, eyeY=0, eyeZ=3, focusX=0, focusY=0, focusZ=0, upX=0.0, upY=1, upZ=0;
             break;
 
@@ -515,6 +512,11 @@ void initGlui(){
 	color_list->add_item(1, "Red");
 	color_list->add_item(2, "Green");
 	color_list->add_item(3, "Blue");
+
+	//Scale object
+	obj_panel = glui->add_panel("Scale Object");
+	glui-> add_spinner_to_panel(obj_panel, "Scale: ", GLUI_SPINNER_FLOAT, &scale);
+
 
     //Axis
      obj_panel = glui->add_panel( "Axis" );
