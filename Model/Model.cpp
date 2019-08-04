@@ -8,63 +8,62 @@
 #include "vertex.h"
 #include <GL/glui.h>
 
- #define GLUI_DEF_MAX_ARRAY  30
-
-
-
 using namespace std;
+//GLUT Window variables
 int WindowWidth = 600, WindowHeight = 600;
-double posX = 0.0, posY = 0.0, posZ = 0.0, posInc = 0.1, angleInc = 2.0;
-double rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
-float scale = 1;			//  Spinner Scale Live Variable
-int option = 0, axisornot = 0, colorSeg = 0;
 bool mousePanMode=false, mouseZoomMode=false, mouseRotationMode=false;
 int mouseX = 0, mouseY = 0;
 float eyeX=0, eyeY=0, eyeZ=0, focusX=0, focusY=0, focusZ=0, upX=0, upY=1, upZ=0;
-void myInit();
-void myDisplayFunc(void);
-void switch_models(int index);
+// window id for main graphics window
+int	MainWindow;
 
+//Object variables
+double posX = 0.0, posY = 0.0, posZ = 0.0, posInc = 0.1, angleInc = 2.0;
+double rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
+float transX=0, transY=0, transZ=0;
+float scale = 1;
+int option = 0, axisornot = 0, colorSeg = 0;
 vertex Manipulation;
-float transX=0, transY=0, transZ=0, transparent=1.0;
 bool displayWireFrame = false, displayVertices = false, displayFaces = true;
 static int model = 0;
-int   wireframe = 0;
-int   segments = 8;
-int main_window;
-GLUI *	Glui;
-
-GLuint	BoxList;			// object display list
-int	MainWindow;				// window id for main graphics window
-float	Scale, Scale2;		// scaling factors
-
-int	Xmouse, Ymouse;			// mouse values
-float	Xrot, Yrot;			// rotation angles in degrees
-float	TransXYZ[3];		// set by glui translation widgets
-//Selection for which radio buttons
-int radbut=0;
-//to check if its ticked or no
-int check=0;
-//to check reset buttons
-int check2=0;
-GLUI_Spinner    *spinner;
-//Matrix identity for rotations
+int   wireframe;
+//Identity matrix for rotation
 float view_rotate[16] = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
 //Translation matrix
 float obj_pos[] = { 0.0, 0.0, 0.0 };
 // minimum allowable scale factor:
 const float MINSCALE = { 0.05f };
-int countX=0;
-int x,y,z;
-//object color settings
-GLUI_Listbox* color_list;
-#define COLOR_ID 20
-int current_color(0);
+// scaling factor
+float	Scale;
+//Selection for which radio buttons
+int radbut=0;
+//to check if its ticked or no
+int check=0;
+//initial object color
 float obj_color [] = {0.5, 0.5, 0.5, 1.0};
-// what the glui package defines as true and false:
+int COLOR_ID = 20;
+int current_color(0);
+float transparent = 1.0;
+
+//GLUI variables
+GLUI *glui;
+GLUI_Panel *obj_panel;
+GLUI_Panel *panel;
+GLUI_RadioGroup *group;
+GLUI_Rotation *rot;
+GLUI_Translation *trans;
+GLUI_Spinner *Trans_spinner;
+GLUI_Listbox* color_list;
+
+//declare functions
+void myInit();
+void myDisplayFunc(void);
+void switch_models(int index);
 
 const int GLUITRUE  = { true  };
 const int GLUIFALSE = { false };
+
+
 
 enum ButtonVals
 {
@@ -75,13 +74,9 @@ enum ButtonVals
 
 void myGlutIdle( void )
 {
-  /* According to the GLUT specification, the current window is
-     undefined during an idle callback.  So we need to explicitly change
-     it if necessary */
 
     glutSetWindow(MainWindow);
-
-  glutPostRedisplay();
+    glutPostRedisplay();
 }
 
 
@@ -232,8 +227,6 @@ void myKeyboardFunc(unsigned char key, int x, int y)
         case 'F': displayVertices = false, displayFaces = true; displayWireFrame = false; break;
         case 'w':
         case 'W': displayVertices = false, displayFaces = false; displayWireFrame = true; break;
-
-
     }
 
     glutPostRedisplay();
@@ -339,16 +332,14 @@ void myInit()
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     glutInitWindowPosition(100, 100); // Set top-left position
     glutInitWindowSize(WindowWidth, WindowHeight); //Set width and height
-    glutCreateWindow("Model");// Create display window
+    MainWindow = glutCreateWindow("Model");// Create display window
 
     switch_models(0);
 
     InitTransparent();
 
     viewing();
-    glHint( GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST );
 
-    glEnable(GL_NORMALIZE);
 
     glClearColor(1.0, 1.0, 1.0, 1.0);
 
@@ -358,9 +349,6 @@ void myInit()
     glutSpecialFunc(mySpecialFunc);
     glutMouseFunc(myMouseFunc);
     glutMotionFunc(myMotionFunc);
-
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_DEPTH_TEST);
 
 
     cout<<"------------------------------------------------------------"<<endl;
@@ -392,14 +380,14 @@ Buttons( int id )
 		case RESET:
 
             Reset();
-			Glui->sync_live( );
+			glui -> sync_live();
 			glutSetWindow( MainWindow );
 			glutPostRedisplay( );
 			break;
 
 		case QUIT:
 
-			Glui->close( );
+			glui->close( );
 			glutSetWindow( MainWindow );
 			glFinish( );
 			glutDestroyWindow( MainWindow );
@@ -451,23 +439,18 @@ void control_cb(int control)
 
 void initGlui(){
 
-    GLUI_Panel *panel;
-	GLUI_RadioGroup *group;
-	GLUI_Rotation *rot;
-	GLUI_Translation *trans;
-	GLUI_Spinner *Trans_spinner;
-
 	// setup the glui window:
 	glutInitWindowPosition( 700, 100 ); //right of object window
-	GLUI *glui= GLUI_Master.create_glui( "GLUI" );
+	glui = GLUI_Master.create_glui( "GLUI" );
 
 	//Object type panel
-	GLUI_Panel *obj_panel = glui->add_panel( "Object Type" );
+	obj_panel = glui->add_panel( "Object Type" );
     group = glui->add_radiogroup_to_panel( obj_panel,&radbut,3 );
     glui->add_radiobutton_to_group( group, "Wireframe" );
     glui->add_radiobutton_to_group( group, "Vertices" );
     glui->add_radiobutton_to_group( group, "Frames" );
 
+    //Object color
     obj_panel = glui->add_panel("Object Color");
     color_list = glui->add_listbox_to_panel(obj_panel, "Colors", &current_color, COLOR_ID, control_cb);
 
@@ -516,7 +499,6 @@ void initGlui(){
     view_rot->set_spin( 0.8 );
 
      glutPostRedisplay();
-	// set the graphics window's idle function if needed:
 
     GLUI_Master.set_glutIdleFunc( NULL );
 

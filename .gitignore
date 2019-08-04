@@ -1,2 +1,5 @@
 
 Model/Model.depend
+*.depend
+*.o
+*.exe
