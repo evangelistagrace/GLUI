@@ -236,7 +236,8 @@ void myKeyboardFunc(unsigned char key, int x, int y)
         case 'C': colorSeg += 1; break;
         case 'm': model += 1; switch_models(model); break;
         case 'n': model -= 1; switch_models(model); break;
-        case 's': axisornot += 1; break;//On or Off the axis
+        case 's': check=0; break;//On or Off the axis
+        case 'S': axisornot += 1; check=1; break;//On or Off the axis
         case 'x': transX +=0.005; break;
         case 'X': transX -=0.005; break;
         case 'y': transY +=0.005; break;
@@ -376,13 +377,14 @@ void myInit()
 
     cout<<"------------------------------------------------------------"<<endl;
     cout<<"Instruction:"<<endl;
-    cout<<"s - On or Off the Axis"
+    cout<<"\nS - to on the Axis"
+        <<"\ns - to off the Axis"
         <<"\nHome - to reset model"
         <<"\nw or W - to display model WireFrame"
         <<"\nv or V - to display model Vertices"
         <<"\nf or F - to display model Faces"
-        <<"\B - to display bounding box"
-        <<"\b - to turn off bounding box"
+        <<"\nB - to display bounding box"
+        <<"\nb - to turn off bounding box"
         <<endl;
 
     cout<<"------------------------------------------------------------"<<endl;
@@ -437,6 +439,9 @@ void Reset_all()
 
     //reset axis
     check = 0;
+
+    //reset bounding box
+    check2 = 0;
 }
 
 Buttons( int id )
