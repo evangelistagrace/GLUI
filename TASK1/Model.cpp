@@ -1,3 +1,14 @@
+/********************************************
+
+Course	: TGD2151	Computer Graphics Fundamentals
+Session: Trimester 1, 2019/20
+ID and	Name	#1 : 1171302056 Evangelista Grace
+Contacts	#1 : 0189686774 grace.evangrace@gmail.com
+ID and	Name	#2 : 1141127046 Low Ting Wei
+Contacts	#2 : 01123676718 tingwei9687@gmail.com
+********************************************/
+
+
 #include <iostream>
 #include <string>
 #include <fstream>
