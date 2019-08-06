@@ -61,6 +61,7 @@ class vertex
     void DisplaySkel();
     void DisplayWireFrame(float, int);
     void checkColor(int num);
+    void boundingBox();
 
     double getX(int index);
 	double getY(int index);

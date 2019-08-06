@@ -36,6 +36,7 @@ float scale = 1;
 int option = 0, axisornot = 0, colorSeg = 0;
 vertex Manipulation;
 bool displayWireFrame = false, displayVertices = false, displayFaces = true;
+bool displayBoundingBox=false;
 static int model = 0;
 int   wireframe;
 //Identity matrix for rotation
@@ -51,6 +52,8 @@ float	Scale;
 int radbut=0;
 //to check if axis is on or off
 int check=0;
+//to check if bounding box is on or off
+int check2=0;
 //rotation value
 float rotation_val=0;
 //initial object color
@@ -163,9 +166,14 @@ void myDisplayFunc(void)
         Manipulation.DisplayFaces(transparent, colorSeg);
     if(displayVertices)
         Manipulation.DisplayVertices(colorSeg);
+    if(displayBoundingBox)
+        Manipulation.boundingBox(); //display bounding box
 
     if(check==1)
         Manipulation.DrawAxis();
+
+    if(check2==1)
+        Manipulation.boundingBox();
 
 
     glPopMatrix();
@@ -236,11 +244,14 @@ void myKeyboardFunc(unsigned char key, int x, int y)
         case 'z': transZ +=0.005; break;
         case 'Z': transZ -=0.005; break;
         case 'v':
-        case 'V': displayVertices = true, displayFaces = false; displayWireFrame = false; break;
+        case 'V': displayVertices = true, displayFaces = false; displayWireFrame = false; radbut=1; break;
         case 'f':
-        case 'F': displayVertices = false, displayFaces = true; displayWireFrame = false; break;
+        case 'F': displayVertices = false, displayFaces = true; displayWireFrame = false; radbut=0; break;
         case 'w':
-        case 'W': displayVertices = false, displayFaces = false; displayWireFrame = true; break;
+        case 'W': displayVertices = false, displayFaces = false; displayWireFrame = true; radbut=2; break;
+        case 'b': displayBoundingBox =  false; check2=0; break;
+        case 'B': displayBoundingBox =  true; check2=1; break;
+
     }
 
     glutPostRedisplay();
@@ -368,8 +379,10 @@ void myInit()
     cout<<"s - On or Off the Axis"
         <<"\nHome - to reset model"
         <<"\nw or W - to display model WireFrame"
-        <<"\nv or V - to display model vertices"
-        <<"\nf or F - to display model surfaces"
+        <<"\nv or V - to display model Vertices"
+        <<"\nf or F - to display model Faces"
+        <<"\B - to display bounding box"
+        <<"\b - to turn off bounding box"
         <<endl;
 
     cout<<"------------------------------------------------------------"<<endl;
@@ -536,6 +549,10 @@ void initGlui(){
     //Axis
      obj_panel = glui->add_panel( "Axis" );
      glui->add_checkbox_to_panel( obj_panel, "Show axis?", &check, 1 );
+
+     //bounding box
+     obj_panel = glui->add_panel( "Bounding Box" );
+     glui->add_checkbox_to_panel( obj_panel, "Display bounding box?", &check2, 1 );
 
     //Buttons
     obj_panel = glui -> add_rollout("Reset", false);

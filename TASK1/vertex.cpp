@@ -297,6 +297,52 @@ void vertex::checkColor(int num)
     glFlush();
 }
 //----------------------------------------------------------------------
+void vertex::boundingBox(){
+   double minX=min[0], minY=min[1], minZ= min[2];
+   double maxX=max[0],maxY=max[1], maxZ=max[2];
+
+   glBegin(GL_LINES);
+    glColor3f(1,1,0); //yellow frame
+    glVertex3f(minX, maxY, maxZ);
+    glVertex3f(maxX, maxY,maxZ);
+    glVertex3f(minX, minY, maxZ);
+    glVertex3f(maxX, minY, maxZ);
+    glVertex3f(minX, minY, maxZ);
+    glVertex3f(minX, maxY, maxZ);
+    glVertex3f(maxX,minY, maxZ);
+    glVertex3f(maxX, maxY, maxZ);
+
+    glVertex3f(minX, maxY, minZ);
+    glVertex3f(maxX, maxY,minZ);
+    glVertex3f(minX, minY, minZ);
+    glVertex3f(maxX, minY, minZ);
+    glVertex3f(minX, minY, minZ);
+    glVertex3f(minX, maxY, minZ);
+    glVertex3f(maxX,minY, minZ);
+    glVertex3f(maxX, maxY, minZ);
+
+    glVertex3f(minX, maxY, minZ);
+    glVertex3f(minX, maxY,maxZ);
+    glVertex3f(minX, minY, minZ);
+    glVertex3f(minX, minY, maxZ);
+    glVertex3f(minX, maxY, minZ);
+    glVertex3f(minX, maxY, maxZ);
+    glVertex3f(minX,minY, minZ);
+    glVertex3f(minX, minY, maxZ);
+
+    glVertex3f(maxX, maxY, minZ);
+    glVertex3f(maxX, maxY,maxZ);
+    glVertex3f(maxX, minY, minZ);
+    glVertex3f(maxX, minY, maxZ);
+    glVertex3f(maxX, maxY, minZ);
+    glVertex3f(maxX, maxY, maxZ);
+    glVertex3f(maxX,minY, minZ);
+    glVertex3f(maxX, minY, maxZ);
+   glEnd();
+};
+
+//--------------------------------------------------------
+
 void vertex::DisplaySkel()
 {
     glPointSize(5.0);

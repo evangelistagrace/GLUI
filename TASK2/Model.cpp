@@ -35,6 +35,7 @@ void switch_models(int index);
 vertex Manipulation;
 float transX=0, transY=0, transZ=0, transparent=1.0;
 bool displayWireFrame = false, displayVertices = false, displayFaces = true;
+bool displayBoundingBox=false;
 static int model = 0;
 
 void InitTransparent()
@@ -73,7 +74,8 @@ void myDisplayFunc(void)
     glRotatef(rotateY, 0.0f, 1.0f, 0.0f);
     glRotatef(rotateZ, 0.0f, 0.0f, 1.0f);
     glScalef(scaleX, scaleY, scaleZ);
-    Manipulation.boundingBox();
+
+
 
     if(axisornot%2 == 1)
        Manipulation.DrawAxis();  //Press
@@ -84,6 +86,8 @@ void myDisplayFunc(void)
         Manipulation.DisplayFaces(transparent, colorSeg);
     if(displayVertices)
         Manipulation.DisplayVertices(colorSeg);
+    if(displayBoundingBox)
+        Manipulation.boundingBox(); //display bounding box
 
     glPopMatrix();
     glFlush();
@@ -152,6 +156,8 @@ void myKeyboardFunc(unsigned char key, int x, int y)
         case 'F': displayVertices = false, displayFaces = true; displayWireFrame = false; break;
         case 'w':
         case 'W': displayVertices = false, displayFaces = false; displayWireFrame = true; break;
+        case 'b': displayBoundingBox =  true; break;
+        case 'B': displayBoundingBox =  true; break;
 
     }
 
@@ -295,8 +301,9 @@ void myInit()
     cout<<"s - On or Off the Axis"
         <<"\nHome - to reset model"
         <<"\nw or W - to display model WireFrame"
-        <<"\nv or V - to display model vertices"
-        <<"\nf or F - to display model surfaces"
+        <<"\nv or V - to display model Vertices"
+        <<"\nf or F - to display model Faces"
+        <<"\nb or B - to display model Bounding Box"
         <<endl;
 
 
