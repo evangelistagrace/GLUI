@@ -547,14 +547,20 @@ void initGlui(){
      trans = glui->add_translation_to_panel( obj_panel, "Translate Y",  GLUI_TRANSLATION_Y ,&obj_pos[1] );
      trans->set_speed( 0.010f ); //set speed of translation
 
+     glui-> add_spinner_to_panel(obj_panel, "Y: ", GLUI_SPINNER_FLOAT, &obj_pos[1]);
+
     glui->add_column_to_panel( obj_panel, GLUIFALSE );
 
     trans = glui->add_translation_to_panel( obj_panel, "Translate Z",  GLUI_TRANSLATION_Z ,&obj_pos[2] );
     trans->set_speed( 0.010f ); //set speed of translation
 
+    glui-> add_spinner_to_panel(obj_panel, "Z: ", GLUI_SPINNER_FLOAT, &obj_pos[2]);
+
     trans = glui->add_translation_to_panel( obj_panel, "Translate XY",  GLUI_TRANSLATION_XY ,&obj_pos[0]);
     trans->set_speed( 0.010f ); //set speed of translation
 
+    glui-> add_spinner_to_panel(obj_panel, "X: ", GLUI_SPINNER_FLOAT, &obj_pos[0]);
+    glui-> add_spinner_to_panel(obj_panel, "Y: ", GLUI_SPINNER_FLOAT, &obj_pos[1]);
 
      //Object rotation
      obj_panel = glui->add_panel("Object Rotation");
@@ -568,9 +574,7 @@ void initGlui(){
 
     GLUI_Master.set_glutIdleFunc( NULL );
 
-//to-do:
-//read rotate and translate values real-time
-//insert collapsible accordion for reset buttons
+
 
 }
 
