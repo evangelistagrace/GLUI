@@ -8,7 +8,6 @@ ID and	Name	#2 : 1141127046 Low Ting Wei
 Contacts	#2 : 01123676718 tingwei9687@gmail.com
 ********************************************/
 
-
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -82,7 +81,6 @@ const int GLUITRUE  = { true  };
 const int GLUIFALSE = { false };
 
 
-
 enum ButtonVals
 {
 	RESET_ROTATION,
@@ -94,7 +92,6 @@ enum ButtonVals
 
 void myGlutIdle( void )
 {
-
     glutSetWindow(MainWindow);
     glutPostRedisplay();
 }
@@ -137,44 +134,48 @@ void myDisplayFunc(void)
     glRotatef(rotateZ, 0.0f, 0.0f, 1.0f);
 
 
-
-         if ( radbut == 0 ) {
-      displayVertices = false, displayFaces = true, displayWireFrame = false;
-        }
-         if(radbut==1)
-        {
-            displayVertices = true, displayFaces = false, displayWireFrame = false;
-        }
-        if(radbut==2)
-        {
-            displayVertices = false, displayFaces = false, displayWireFrame = true;
-        }
-
+    //display faces
+     if ( radbut == 0 ) {
+        displayVertices = false, displayFaces = true, displayWireFrame = false;
+    }
+    //display vertices
+     if(radbut==1)
+    {
+        displayVertices = true, displayFaces = false, displayWireFrame = false;
+    }
+    //display wireframe
+    if(radbut==2)
+    {
+        displayVertices = false, displayFaces = false, displayWireFrame = true;
+    }
 
     //calling rotation matrix
     glMultMatrixf( view_rotate );
     //Translation matrix
     glTranslatef( obj_pos[0], obj_pos[1], -obj_pos[2]);
 
-
-
     glScalef(scale, scale, scale);
 
+    //display wireframe
     if(displayWireFrame)
         Manipulation.DisplayWireFrame(transparent, colorSeg);
+    //display faces
     if(displayFaces)
         Manipulation.DisplayFaces(transparent, colorSeg);
+    //display vertices
     if(displayVertices)
         Manipulation.DisplayVertices(colorSeg);
+    //display bounding box
     if(displayBoundingBox)
-        Manipulation.boundingBox(); //display bounding box
+        Manipulation.boundingBox();
 
+    //display axis
     if(check==1)
         Manipulation.DrawAxis();
 
+    //display bounding box
     if(check2==1)
         Manipulation.boundingBox();
-
 
     glPopMatrix();
     glFlush();
@@ -236,8 +237,8 @@ void myKeyboardFunc(unsigned char key, int x, int y)
         case 'C': colorSeg += 1; break;
         case 'm': model += 1; switch_models(model); break;
         case 'n': model -= 1; switch_models(model); break;
-        case 's': check=0; break;//On or Off the axis
-        case 'S': axisornot += 1; check=1; break;//On or Off the axis
+        case 's': check=0; break;//Off the axis
+        case 'S': axisornot += 1; check=1; break;//On the axis
         case 'x': transX +=0.005; break;
         case 'X': transX -=0.005; break;
         case 'y': transY +=0.005; break;
@@ -252,7 +253,6 @@ void myKeyboardFunc(unsigned char key, int x, int y)
         case 'W': displayVertices = false, displayFaces = false; displayWireFrame = true; radbut=2; break;
         case 'b': displayBoundingBox =  false; check2=0; break;
         case 'B': displayBoundingBox =  true; check2=1; break;
-
     }
 
     glutPostRedisplay();
@@ -347,7 +347,6 @@ void switch_models(int index)
             segment_filename = "data/Animal11Seg.seg";
             eyeX=0, eyeY=0, eyeZ=3, focusX=0, focusY=0, focusZ=0, upX=0.0, upY=1, upZ=0;
             break;
-
     }
     cout << "Switched model to " << points_filename << endl;
     Manipulation.read3DModel(points_filename.c_str());
@@ -356,8 +355,8 @@ void switch_models(int index)
 void myInit()
 {
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
-    glutInitWindowPosition(100, 100); // Set top-left position
-    glutInitWindowSize(WindowWidth, WindowHeight); //Set width and height
+    glutInitWindowPosition(100, 100); // Set t window atop-left position
+    glutInitWindowSize(WindowWidth, WindowHeight); //Set width and height of window
     MainWindow = glutCreateWindow("Model");// Create display window
 
     switch_models(0);
@@ -487,9 +486,9 @@ Buttons( int id )
 void Yvalue(int &y)
 {
         y = WindowHeight - y;
-
 }
 
+//change color of model
 void control_cb(int control)
 {
 	if (control == COLOR_ID)
@@ -526,12 +525,12 @@ void control_cb(int control)
 
 void initGlui(){
 
-	// setup the glui window:
-	glutInitWindowPosition( 700, 100 ); //right of object window
-	glui = GLUI_Master.create_glui( "GLUI" );
+    // setup the glui window:
+    glutInitWindowPosition( 700, 100 ); //right of object window
+    glui = GLUI_Master.create_glui( "GLUI" );
 
-	//Object type panel
-	obj_panel = glui->add_panel( "Object Type" );
+    //Object type panel
+    obj_panel = glui->add_panel( "Object Type" );
     group = glui->add_radiogroup_to_panel( obj_panel,&radbut,3 );
     glui->add_radiobutton_to_group( group, "Faces" );
     glui->add_radiobutton_to_group( group, "Vertices" );
@@ -542,22 +541,21 @@ void initGlui(){
     color_list = glui->add_listbox_to_panel(obj_panel, "Colors: ", NULL, COLOR_ID, control_cb);
 
     color_list->add_item(0, "Grey");
-	color_list->add_item(1, "Red");
-	color_list->add_item(2, "Green");
-	color_list->add_item(3, "Blue");
+    color_list->add_item(1, "Red");
+    color_list->add_item(2, "Green");
+    color_list->add_item(3, "Blue");
 
-	//Scale object
-	obj_panel = glui->add_panel("Scale Object");
-	glui-> add_spinner_to_panel(obj_panel, "Scale: ", GLUI_SPINNER_FLOAT, &scale);
-
+    //Scale object
+    obj_panel = glui->add_panel("Scale Object");
+    glui-> add_spinner_to_panel(obj_panel, "Scale: ", GLUI_SPINNER_FLOAT, &scale);
 
     //Axis
-     obj_panel = glui->add_panel( "Axis" );
-     glui->add_checkbox_to_panel( obj_panel, "Show axis?", &check, 1 );
+    obj_panel = glui->add_panel( "Axis" );
+    glui->add_checkbox_to_panel( obj_panel, "Show axis?", &check, 1 );
 
-     //bounding box
-     obj_panel = glui->add_panel( "Bounding Box" );
-     glui->add_checkbox_to_panel( obj_panel, "Display bounding box?", &check2, 1 );
+    //bounding box
+    obj_panel = glui->add_panel( "Bounding Box" );
+    glui->add_checkbox_to_panel( obj_panel, "Display bounding box?", &check2, 1 );
 
     //Buttons
     obj_panel = glui -> add_rollout("Reset", false);
@@ -566,21 +564,21 @@ void initGlui(){
     glui->add_button_to_panel(obj_panel, "Reset All", RESET_ALL, (GLUI_Update_CB) Buttons );
     glui->add_button("Quit", QUIT, (GLUI_Update_CB) Buttons );
 
-     ///////////////////////////////
-     glui->add_column(true);
+    //--------------------------------------------------------------------------------------------------------
+    glui->add_column(true);
 
-     //Object translation
-     obj_panel = glui->add_panel("Object Translation");
+    //Object translation
+    obj_panel = glui->add_panel("Object Translation");
 
-     trans = glui->add_translation_to_panel( obj_panel, "Translate X",  GLUI_TRANSLATION_X ,&obj_pos[0] );
-     trans->set_speed( 0.010f ); //set speed of translation
+    trans = glui->add_translation_to_panel( obj_panel, "Translate X",  GLUI_TRANSLATION_X ,&obj_pos[0] );
+    trans->set_speed( 0.010f ); //set speed of translation
 
-     glui-> add_spinner_to_panel(obj_panel, "X: ", GLUI_SPINNER_FLOAT, &obj_pos[0]);
+    glui-> add_spinner_to_panel(obj_panel, "X: ", GLUI_SPINNER_FLOAT, &obj_pos[0]);
 
-     trans = glui->add_translation_to_panel( obj_panel, "Translate Y",  GLUI_TRANSLATION_Y ,&obj_pos[1] );
-     trans->set_speed( 0.010f ); //set speed of translation
+    trans = glui->add_translation_to_panel( obj_panel, "Translate Y",  GLUI_TRANSLATION_Y ,&obj_pos[1] );
+    trans->set_speed( 0.010f ); //set speed of translation
 
-     glui-> add_spinner_to_panel(obj_panel, "Y: ", GLUI_SPINNER_FLOAT, &obj_pos[1]);
+    glui-> add_spinner_to_panel(obj_panel, "Y: ", GLUI_SPINNER_FLOAT, &obj_pos[1]);
 
     glui->add_column_to_panel( obj_panel, GLUIFALSE );
 
@@ -595,19 +593,17 @@ void initGlui(){
     glui-> add_spinner_to_panel(obj_panel, "X: ", GLUI_SPINNER_FLOAT, &obj_pos[0]);
     glui-> add_spinner_to_panel(obj_panel, "Y: ", GLUI_SPINNER_FLOAT, &obj_pos[1]);
 
-     //Object rotation
-     obj_panel = glui->add_panel("Object Rotation");
-     glui -> add_statictext_to_panel(obj_panel, "Press ALT key for horizontal movement (rotation along Y-axis");
-     glui -> add_statictext_to_panel(obj_panel, "Press CTRL key for vertical movement (rotation along X-axis");
-     GLUI_Rotation *view_rot = glui -> add_rotation_to_panel(obj_panel, "Rotate", view_rotate );
+    //Object rotation
+    obj_panel = glui->add_panel("Object Rotation");
+    glui -> add_statictext_to_panel(obj_panel, "Press ALT key for horizontal movement (rotation along Y-axis");
+    glui -> add_statictext_to_panel(obj_panel, "Press CTRL key for vertical movement (rotation along X-axis");
+    GLUI_Rotation *view_rot = glui -> add_rotation_to_panel(obj_panel, "Rotate", view_rotate );
     view_rot->set_spin( 0.8 );
 
     glui -> sync_live();
-     glutPostRedisplay();
+    glutPostRedisplay();
 
     GLUI_Master.set_glutIdleFunc( NULL );
-
-
 
 }
 
