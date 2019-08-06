@@ -519,7 +519,9 @@ void initGlui(){
 
     GLUI_Master.set_glutIdleFunc( NULL );
 
-
+//to-do:
+//read rotate and translate values real-time
+//insert collapsible accordion for reset buttons
 
 }
 
