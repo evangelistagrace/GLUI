@@ -36,10 +36,12 @@ float obj_pos[] = { 0.0, 0.0, 0.0 };
 const float MINSCALE = { 0.05f };
 // scaling factor
 float	Scale;
-//Selection for which radio buttons
+//to check for object type
 int radbut=0;
-//to check if its ticked or no
+//to check if axis is on or off
 int check=0;
+//rotation value
+float rotation_val=0;
 //initial object color
 float obj_color [] = {0.5, 0.5, 0.5, 1.0};
 int COLOR_ID = 20;
@@ -406,8 +408,11 @@ void Reset_all()
     obj_color[1] = 0.5;
     obj_color[2] = 0.5;
 
-
+    //reset object type
     radbut = 0;
+
+    //reset axis
+    check = 0;
 }
 
 Buttons( int id )
@@ -536,6 +541,8 @@ void initGlui(){
 
      trans = glui->add_translation_to_panel( obj_panel, "Translate X",  GLUI_TRANSLATION_X ,&obj_pos[0] );
      trans->set_speed( 0.010f ); //set speed of translation
+
+     glui-> add_spinner_to_panel(obj_panel, "X: ", GLUI_SPINNER_FLOAT, &obj_pos[0]);
 
      trans = glui->add_translation_to_panel( obj_panel, "Translate Y",  GLUI_TRANSLATION_Y ,&obj_pos[1] );
      trans->set_speed( 0.010f ); //set speed of translation
