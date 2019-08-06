@@ -69,7 +69,9 @@ const int GLUIFALSE = { false };
 
 enum ButtonVals
 {
-	RESET,
+	RESET_ROTATION,
+	RESET_TRANSLATION,
+	RESET_ALL,
 	QUIT
 };
 
@@ -361,7 +363,28 @@ void myInit()
 
 }
 
-void Reset()
+void Reset_rotation()
+{
+
+    //reset rotation
+    rotateX = 0.0, rotateY = 0.0, rotateZ = 0.0;
+
+    view_rotate[1]=view_rotate[2]=view_rotate[3]=view_rotate[6]=view_rotate[7]=view_rotate[9]=view_rotate[11]=view_rotate[13]=view_rotate[14]=0.0;
+    view_rotate[0]=view_rotate[5]=view_rotate[10]=view_rotate[15]= 1.0;
+    view_rotate[4]=rotateX;
+    view_rotate[8]=rotateY;
+    view_rotate[12]=rotateZ;
+
+}
+
+void Reset_translation()
+{
+    //reset position
+	obj_pos[0] = obj_pos[1] = obj_pos[2] = 0.0;
+
+}
+
+void Reset_all()
 {
     //reset position
 	obj_pos[0] = obj_pos[1] = obj_pos[2] = 0.0;
@@ -391,9 +414,25 @@ Buttons( int id )
 {
 	switch( id )
 	{
-		case RESET:
+		case RESET_ROTATION:
 
-            Reset();
+            Reset_rotation();
+			glui -> sync_live();
+			glutSetWindow( MainWindow );
+			glutPostRedisplay( );
+			break;
+
+        case RESET_TRANSLATION:
+
+            Reset_translation();
+			glui -> sync_live();
+			glutSetWindow( MainWindow );
+			glutPostRedisplay( );
+			break;
+
+        case RESET_ALL:
+
+            Reset_all();
 			glui -> sync_live();
 			glutSetWindow( MainWindow );
 			glutPostRedisplay( );
@@ -483,7 +522,10 @@ void initGlui(){
      glui->add_checkbox_to_panel( obj_panel, "Show axis?", &check, 1 );
 
     //Buttons
-    glui->add_button("Reset", RESET, (GLUI_Update_CB) Buttons );
+    obj_panel = glui -> add_rollout("Reset", false);
+    glui->add_button_to_panel(obj_panel, "Reset Rotation", RESET_ROTATION, (GLUI_Update_CB) Buttons );
+    glui->add_button_to_panel(obj_panel, "Reset Translation", RESET_TRANSLATION, (GLUI_Update_CB) Buttons );
+    glui->add_button_to_panel(obj_panel, "Reset All", RESET_ALL, (GLUI_Update_CB) Buttons );
     glui->add_button("Quit", QUIT, (GLUI_Update_CB) Buttons );
 
      ///////////////////////////////
